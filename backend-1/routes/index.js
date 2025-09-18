@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const { User } = require("../db.js");
 
 const router = express.Router();
-const SECRET = "Jok3r";
+
 
 router.post("/signup", async (req, res) => {
   try {
@@ -15,7 +15,7 @@ router.post("/signup", async (req, res) => {
     const newUser = new User({ email, password });
     await newUser.save();
 
-    const token = jwt.sign({ email, role: "admin" }, SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ email, role: "admin" }, process.env.JWT_SECRET, { expiresIn: "1h" });
     res.json({ message: "User created successfully", token });
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
@@ -31,8 +31,8 @@ router.post("/signin", async (req, res) => {
     return res.status(403).json({ message: "Invalid username or password" });
   }
 
-  const token = jwt.sign({ email, role: "admin" }, SECRET, { expiresIn: "1h" });
+  const token = jwt.sign({ email, role: "admin" }, process.env.JWT_SECRET, { expiresIn: "1h" });
   res.json({ message: "Logged in successfully", token });
 });
 
-module.exports = router;   // ✅ ONLY this
+module.exports = router;   
